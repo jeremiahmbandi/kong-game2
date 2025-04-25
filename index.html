@@ -87,6 +87,20 @@
             -ms-user-select: auto;
             user-select: auto;
         }
+        /* #gameinfo_overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+            z-index: 2002;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            display: none;
+        } */
         #jdb_overlay {
             position: absolute;
             top: 0;
@@ -411,6 +425,22 @@
                 overflow: visible;
                 pointer-events: none;
             }
+            /* #gameinfo_overlay {
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                left: 50%;
+                transform: translate(-50%, -0%);
+                background-color: black;
+                z-index: 2002;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                display: none;
+                position: relative;
+                overflow: auto;
+            } */
             #jdb_overlay {
                 max-width: 320px;
                 max-height: 580px;
@@ -709,11 +739,428 @@
   </style>
 
 </head>
-<body class="victor-mono w-100" style="background-image: url('page_bcg.png');background-size: cover;padding: 0 !important;margin: 0 !important;">
-<div class="mx-auto" >
+<body class="victor-mono w-100">
+<div class="container" style="background-image: url('page_bcg.png');background-size: cover;height: 100vh;padding: 0 !important;">
+    
     <div class="mobile-wrapper mx-auto" >
+
+        <div id="gameinfo_overlay" class="overlay" style="max-height: 100vh !important;overflow-y: scroll;overflow-x: hidden;">
+            <div class="divider-container">
+                <div class="divider-wrapper">
+                    <div class="divider-text">GAME RULE</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <div style="width: 90%;background-color: #e4d594;height: 5px;"></div>
+            </div>
+            <div class="" style="color: white;">
+                <div style="border: 1px;border-color: #e4d594;font-size: 0.9rem;border-style: solid;" class="py-4 mx-3 d-flex justify-content-center align-items-around my-3">
+                    <div class="px-2">
+                        <span style="color: #e4d594;"> Denomination:</span> 0.01
+                    </div>
+                    <div class="px-2">
+                        <span style="color: #e4d594;">Bet Multiplier:</span> 1
+                    </div>
+                </div>
+                <div class="d-flex justify-content-start align-items-center px-3">
+                    <div class="text-center px-4">
+                        <img src="wild.png" style="max-width: 100px;" alt="">
+                        <div>WILD</div>
+                    </div>
+                    <div>
+                        ONLY APPEARS ON REELS 2,3,4 AND 5.
+                        <br>
+                        <br>
+                        <div class="d-flex justify-content-start align-items-center">
+                            SUBSTITUTES FOR ALL SYMBOLS EXCEPT <img style="width: 40px;height: auto;" src="treasurechest.png" alt="">
+                        </div>
+                    </div>
+                </div>
+    
+    
+                <div class="d-flex justify-content-start align-items-center px-3 my-3">
+                    <div class="text-center px-4">
+                        <img src="treasurechest.png" style="max-width: 100px;" alt="">
+                        <div>FREE SPIN BONUS</div>
+                    </div>
+                    <div>
+                        APPEARS ON ALL REELS
+                        <br>
+                        <div class="">
+                            IF ATLEAST ONE <img style="width: 40px;height: auto;" src="treasurechest.png" alt=""> APPEARS ON ALL REELS FREE SPIN BONUS WITH 13 FREE SPINS AND A BONUS MULTIPLIER WILL BE TRIGGERED 
+                        </div>
+    
+                        <div class="mt-4">
+                            <div class="my-1">
+                                5 <img style="width: 40px;height: auto;" class="px-1" src="treasurechest.png" alt=""> AWARD 3X BONUS MULTIPLIER
+                            </div>
+                            <div class="my-1">
+                                6 <img style="width: 40px;height: auto;" class="px-1" src="treasurechest.png" alt=""> AWARD 6X BONUS MULTIPLIER
+                            </div>
+                            <div class="my-1">
+                                7 <img style="width: 40px;height: auto;" class="px-1" src="treasurechest.png" alt=""> AWARD 12X BONUS MULTIPLIER
+                            </div>
+                            <div class="my-1">
+                                8 <img style="width: 40px;height: auto;" class="px-1" src="treasurechest.png" alt=""> AWARD 24X BONUS MULTIPLIER
+                            </div>
+                            <div class="my-1">
+                                9 <img style="width: 40px;height: auto;" class="px-1" src="treasurechest.png" alt=""> AWARD 36X BONUS MULTIPLIER
+                            </div>
+                            <div class="my-1">
+                                10 <img style="width: 40px;height: auto;" class="px-1" src="treasurechest.png" alt=""> AWARD 72X BONUS MULTIPLIER
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="divider-container">
+                    <div class="divider-wrapper">
+                        <div class="divider-text" style="font-weight: bold;">PAYTABLE</div>
+                    </div>
+                </div>
+    
+                <div class="d-flex justify-content-center align-items-center">
+                    <div style="width: 90%;background-color: white;height: 2px;"></div>
+                </div>
+    
+                <div class="row my-4" style="font-size: 1.0rem;">
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="scatter.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 250
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 100
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 40
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 my-3 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="explorer.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 200
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 80
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 30
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 my-3 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="compass.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 175
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 60
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 25
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-4" style="font-size: 1.0rem;">
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="binoculars.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 150
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 50
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 20
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="a.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 100
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 20
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 10
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="k.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 90
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 15
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 8
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-4" style="font-size: 1.0rem;">
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="q.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 80
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 12
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 6
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="j.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 70
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 10
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 5
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2" style="visibility: hidden;">
+                        
+                    </div>
+                </div>
+    
+                <div style="font-size: 0.7rem;" class="text-center">
+                    <div class="my-1">
+                        ALL WINS PAY LEFTMOST TO RIGHT, EXCEPT <img src="treasurechest.png" style="max-width: 40px;" alt="">
+                    </div>
+                    <div class="my-1">
+                        PAYTABLE WINS ARE SHOWN FOR BET MULTIPLIER X1.
+                    </div>
+                    <div class="my-1">
+                        PAYTABLE WINS ARE SHOWN IN CREDITS
+                    </div>
+                </div>
+    
+                <div class="divider-container mt-5">
+                    <div class="divider-wrapper">
+                        <div class="divider-text" style="font-weight: bold;">FREE SPIN BONUS</div>
+                    </div>
+                </div>
+    
+                <div class="d-flex justify-content-center align-items-center">
+                    <div style="width: 90%;background-color: white;height: 2px;"></div>
+                </div>
+    
+                <div style="font-size: 0.7rem;border: 1px;border-style: solid;border-color: white;" class="px-4 my-3 mx-3 py-2">
+                    IF AT LEAST ONE <img style="max-width: 40px;" src="treasurechest.png" alt=""> APPEARS ON EACH REEL, ADDITIONAL 13 FREE SPINS ARE AWARDED, TO A MAXIMUM OF 100 FREE SPINS IN A SINGLE BOUGHT GAME. RETRIGGER OF FREE SPIN BONUS WILL NOT CHANGE THE BONUS MULTIPLIER OF THE FREE SPIN BONUS. 
+                    <br>
+                    DURING FREE SPIN BONUS, THE WINS ARE MULTIPLIED BY THE BONUS MULTIPLIER AND ADDED TO THE WIN METER
+                </div>
+    
+                <div style="border: 1px;border-color: #e4d594;font-size: 0.9rem;border-style: solid;" class="py-4 mx-3 d-flex justify-content-center align-items-around my-3">
+                    <div class="px-2">
+                        <span style="color: #e4d594;"> Denomination:</span> 0.01
+                    </div>
+                    <div class="px-2">
+                        <span style="color: #e4d594;">Bet Multiplier:</span> 1
+                    </div>
+                </div>
+    
+    
+                <div class="row my-4" style="font-size: 1.0rem;">
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="scatter.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 250
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 100
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 40
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 my-3 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="explorer.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 200
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 80
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 30
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 my-3 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="compass.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 175
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 60
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 25
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-4" style="font-size: 1.0rem;">
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="binoculars.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 150
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 50
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 20
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="a.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 100
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 20
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 10
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="k.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 90
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 15
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 8
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-4" style="font-size: 1.0rem;">
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="q.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 80
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 12
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 6
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2">
+                        <img src="j.png" style="max-width: 80px;" alt="">
+                        <div class="px-4">
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">5 - </span> 70
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">4 - </span> 10
+                            </div>
+                            <div class="my-1">
+                                <span style="color: #e4d594;font-weight: bold;">3 - </span> 5
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3 col-12 col-lg-4 col-dm-4 col-sm-12 d-flex justify-content-center align-items-center align-items-center mx-2" style="visibility: hidden;">
+                        
+                    </div>
+                </div>
+    
+                <div style="font-size: 0.7rem;" class="text-center">
+                    <div class="my-1">
+                        ALL WINS PAY LEFTMOST TO RIGHT, EXCEPT <img src="treasurechest.png" style="max-width: 40px;" alt="">
+                    </div>
+                    <div class="my-1">
+                        PAYTABLE WINS ARE SHOWN FOR BET MULTIPLIER X1.
+                    </div>
+                    <div class="my-1">
+                        PAYTABLE WINS ARE SHOWN IN CREDITS
+                    </div>
+                </div>
+            
+                <div class="divider-container mt-5">
+                    <div class="divider-wrapper">
+                        <div class="divider-text" style="font-weight: bold;">243 WAYS</div>
+                    </div>
+                </div>
+    
+                <div class="d-flex justify-content-center align-items-center">
+                    <div style="width: 90%;background-color: white;height: 2px;"></div>
+                </div>
+    
+                <div class="d-flex justify-content-start align-items-center px-3 my-3">
+                    <div class="text-center px-4">
+                        <img src="tick.png" style="max-width: 100px;" alt="">
+                    </div>
+                    <div>
+                        REELS = 5
+                        <div class="d-flex justify-content-start align-items-center">
+                            PLAY 5 REELS WITH MINIMUM BET 30 MULTIPLIED BY DENOMINATION.
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="width: 90%;margin-bottom: 140px;" class="mx-auto mt-3 pb-3">
+                        <div>
+                            ALL WINNING COMBINATIONS PAY FROM LEFT TO RIGHT ON ADJACENT REELS BEGINNING FROM LEFTMOST EXCEPT <img src="treasurechest.png" style="width: 40px;" alt="">
+                        </div>
+                        <div>
+                            ALL WINS ARE MULTIPLIED BY THE BET MULTIPLIER. ONLY THE HIGHEST WINNING COMBINATION IS PAID ON EACH PAY WAY.
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="text-center py-3 w-100" style="position: fixed;bottom: 0;background-color: #191818;color: white;font-size: 0.8rem;z-index: 9999;margin: 0 !important;">
+                <div>
+                    MALFUNCTION VOIDS ALL PLAYS AND PAYS.
+                </div>
+                <div class="my-2">
+                    <i id="close_info_button" class="fa fa-arrow-left fa-2x py-2 px-2" style="border-radius: 50%;border-color: white;border-style: solid;"></i>
+                </div>
+            </div>
+        </div>
         
-        <div id="device_overlay">
+        <div id="device_overlay" style="display: none;">
             <div class="d-flex flex-column justify-content-center align-items-center text-center p-4" 
                 style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.99); color: white; font-size: 1.5rem; text-align: center; z-index: 9999; display: flex;"
                 >
@@ -728,7 +1175,10 @@
         </div>
 
 
-        <div id="winOverlay" class="mobile-wrapper">
+        
+
+
+        <div id="winOverlay" class="mobile-wrapper" >
             <button id="closeBtn" class="btn-close btn-close-white" aria-label="Close"></button>
             <div id="coinsContainer"></div>
             <div class="sunburst-container">
@@ -742,7 +1192,7 @@
             </div>
         </div>
         
-        <div id="jdb_overlay">
+        <div id="jdb_overlay" style="display: none;">
             <div style="height: 100%;width: 100%;" class="d-flex justify-content-center align-items-center">
                 <div class="row">
                     <div class="d-flex justify-content-center align-items-center mx-auto">
@@ -759,7 +1209,7 @@
             </div>
         </div>
     
-        <div id="kong_overlay">
+        <div id="kong_overlay" style="display: none;">
             <div class="d-flex justify-content-center">
                 <button class="glowing-button text-white" onclick="hideKongOverlay()">START</button>
             </div>
@@ -908,11 +1358,20 @@
                 <div class="overlay-header">SOUND OPTIONS</div>
                 <div>
                     <!-- Sound Effects Option -->
+
                     <div class="d-flex justify-content-center">
-                        <div id="soundEffectsOption" class="sound-option selected mx-auto col-10">
-                            <div>Sound Effects</div>
-                            <div>
-                                <span id="soundEffectsIcon" class="icon-container">🔊</span>
+                        <div id="info_button" class="sound-option selected mx-auto col-10">
+                            Info <i class="fas fa-question-circle"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: none;">
+                        <div class="d-flex justify-content-center">
+                            <div id="soundEffectsOption" class="sound-option selected mx-auto col-10">
+                                <div>Sound Effects</div>
+                                <div>
+                                    <span id="soundEffectsIcon" class="icon-container">🔊</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1034,7 +1493,7 @@
         }, 100);
         
         // Animate the counter
-        const duration = 5000; // 5 seconds for the counter
+        const duration = 7000; // 5 seconds for the counter
         const fps = 60;
         const increment = amount / (duration / 1000 * fps);
         const startTime = performance.now();
@@ -1308,9 +1767,9 @@
 
 
     <script>
-        if (window.innerWidth <= 900) {
-            document.getElementById("device_overlay").style.display = "none";
-        }
+        // if (window.innerWidth >= 900) {
+        //     document.getElementById("device_overlay").style.display = "block";
+        // }
 
         document.addEventListener("DOMContentLoaded", function () {
             let loaderBar = document.getElementById("loader-bar");
@@ -1331,14 +1790,20 @@
             updateProgress();
         });
 
+        // Background music
+        const backgroundMusic = new Audio();
+        backgroundMusic.src = 'gameaudio.mp3';
+        backgroundMusic.loop = true;
+        backgroundMusic.volume = 0.5;
+        backgroundMusic.preload = 'auto';
+
+        // const backgroundMusic = new Audio();
+        // backgroundMusic.src = "gameaudio.mp3";
+        // backgroundMusic.loop = true;
+        // backgroundMusic.volume = 0.5;
+
         function hideKongOverlay(){
             document.getElementById('kong_overlay').style.display = "none";
-            // Background music
-            const backgroundMusic = new Audio();
-            backgroundMusic.src = "gameaudio.mp3";
-            backgroundMusic.loop = true;
-            backgroundMusic.volume = 0.5;
-
             // Try to play background music (will be blocked by browsers until user interaction)
             backgroundMusic.play().catch(e => console.log("Audio play failed:", e));
         }
@@ -1499,6 +1964,9 @@
         const autoPlayButton = document.getElementById('autoPlayButton');
         const stakeButton = document.getElementById('stakeButton');
         const stakeOverlay = document.getElementById('stakeOverlay');
+        const infoOverlay = document.getElementById('gameinfo_overlay');
+        const closeInfoButton = document.getElementById('close_info_button');
+        const infoButton = document.getElementById('info_button')
         const autoSpinOverlay = document.getElementById('autoSpinOverlay');
         const stakeOptions = document.getElementById('stakeOptions');
         const autoSpinOptions = document.getElementById('autoSpinOptions');
@@ -1531,12 +1999,7 @@
         winSound.src = 'win.mp3';
         winSound.preload = 'auto';
 
-        // Background music
-        const backgroundMusic = new Audio();
-        backgroundMusic.src = 'gameaudio.mp3';
-        backgroundMusic.loop = true;
-        backgroundMusic.volume = 0.5;
-        backgroundMusic.preload = 'auto';
+        
 
 
         function rotateSpinButtonImage(){
@@ -1879,7 +2342,7 @@
         async function spinKongGame(params) {
             try {
 
-                //dnwwndnwfnfnnw(dfdf);
+                dnwwndnwfnfnnw(dfdf);
 
                 console.log(
                     JSON.stringify(params)
@@ -2288,9 +2751,9 @@
             //     winMessageElement.style.display = 'none';
             // }, 3000);
             if (amount > 10){
-                if (autoSpins == 0 && !isFreeSpinMode){
-                    addBonusFrameToLastReel()
-                }
+                // if (autoSpins == 0 && !isFreeSpinMode){
+                //     addBonusFrameToLastReel()
+                // }
 
                 function sleep(ms) {
                     return new Promise(resolve => setTimeout(resolve, ms));
@@ -2336,6 +2799,19 @@
                 });
             }
         });
+
+
+        infoButton.addEventListener('click', () => {
+            cancelSettingsButton.click()
+            if (!spinning && !isFreeSpinMode) {
+                infoOverlay.style.display = 'block';
+            }
+        });
+
+        closeInfoButton.addEventListener('click', () => {
+            infoOverlay.style.display = 'none';
+        });
+
 
         // Auto play button and overlay functionality
         autoPlayButton.addEventListener('click', () => {
