@@ -365,12 +365,12 @@
     </style>
     <style>
         .mobile-wrapper {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 100vw;
+            max-height: 100vh;
         }
         .autoplay-button, .stake-button{
-            height: 100px;
-            width: 100px;
+            height: 80px;
+            width: 80px;
         }
         .spin-img{
             height: 65px;
@@ -383,6 +383,10 @@
         .autospininner-img{
             height: 40px;
             width: 40px;
+        }
+        .autospininnerimgstop{
+            height: 30px;
+            width: 30px;
         }
         .totalbetinner-img{
             height: 25px;
@@ -403,7 +407,7 @@
             font-weight: bold;
         }
 
-        @media screen and (min-width: 992px) {
+        @media screen and (min-width: 900px) {
             .sunburst-container {
                 position: absolute;
                 top: 50%;
@@ -509,6 +513,10 @@
             .autospininner-img{
                 height: 30px;
                 width: 30px;
+            }
+            .autospininnerimgstop{
+                height: 25px;
+                width: 25px;
             }
             .totalbetinner-img{
                 height:21px
@@ -1365,7 +1373,7 @@
                 </div>
                 <div class="d-flex justify-content-center align-items-center">
                     <img id="quickspin-toggle" src="quickspin-a.png" style="height: 60px;width: 60px;" alt="">
-                    <script>
+                    <!-- <script>
                         const img = document.getElementById("quickspin-toggle");
 
                         img.addEventListener("click", function () {
@@ -1377,16 +1385,18 @@
                             div.style.backgroundColor = "#333";
                             div.style.boxShadow = "0 0 4px #e4d594";
                             div.style.color = "white";
+                            isQuickSpinMode = false;
                         }
                         else if (img.src.includes("quickspin-b.png")){
                             const div = document.getElementById("confirmAutoSpin");
                             div.style.backgroundColor = "#333";
                             div.style.color = "white";
                             div.style.boxShadow = "none";
+                            isQuickSpinMode = true;
                         }
                         
                        
-                    </script>
+                    </script> -->
                 </div>
                 <div class="overlay-footer">
                     <button class="cancel-button" id="cancelAutoSpin">Cancel</button>
@@ -1998,6 +2008,7 @@
         let selectedAutoSpins = 0; // Default auto spins value
 
         // Free spins state
+        let isQuickSpinMode = false
         let isFreeSpinMode = false;
         let freeSpinCount = 0;
         let bonusMultiplier = 0;
@@ -2035,6 +2046,8 @@
         const bonusMultiplierElement = document.getElementById('bonus-multiplier');
 
         // Settings elements
+        let autoSpinsStopped = true;
+        const quickspinToggleImg = document.getElementById("quickspin-toggle");
         const settingsButton = document.getElementById('settingsButton');
         const settingsOverlay = document.getElementById('settingsOverlay');
         const soundEffectsOption = document.getElementById('soundEffectsOption');
@@ -2052,6 +2065,40 @@
         const winSound = new Audio();
         winSound.src = 'win.mp3';
         winSound.preload = 'auto';
+
+
+        quickspinToggleImg.addEventListener("click", function () {
+            quickspinToggleImg.src = quickspinToggleImg.src.includes("quickspin-a.png") ? "quickspin-b.png" : "quickspin-a.png";
+            if (quickspinToggleImg.src.includes("quickspin-a.png")) {
+                // const div = document.getElementById("confirmAutoSpin");
+                // div.style.backgroundColor = "#333";
+                // div.style.boxShadow = "0 0 4px #e4d594";
+                // div.style.color = "white";
+                isQuickSpinMode = false;
+            } else if (quickspinToggleImg.src.includes("quickspin-b.png")) {
+                // const div = document.getElementById("confirmAutoSpin");
+                // div.style.backgroundColor = "#333";
+                // div.style.color = "white";
+                // div.style.boxShadow = "none";
+                isQuickSpinMode = true;
+            }
+        });
+
+        function updateAutoSpinStatus(){
+            if (autoSpinsStopped){
+                selectedAutoSpins = 0
+                const autoSpinOptionButtons = autoSpinOptions.querySelectorAll('.option-button');
+                autoSpinOptionButtons.forEach(button => {
+                    if (button.classList.contains('selected')) {
+                        button.classList.remove('selected');
+                    }
+                });
+                autoPlayButton.innerHTML = `<img src="autospininnerimg.png" class="autospininner-img"  alt="">`
+            }
+            else{
+                autoPlayButton.innerHTML = `<img src="autospininnerimgstop.png" class="autospininnerimgstop"  alt="">`
+            }
+        }
 
         
 
@@ -2219,7 +2266,7 @@
                     
                     callback();
                 }
-            }, 100);
+            }, isQuickSpinMode ? 100 : 200);
         }
 
         function highlightWinningSymbols(apiReels, winningPositions) {
@@ -2677,18 +2724,29 @@
 
                     // Update auto spins
                     if (autoSpins > 0) {
-                        autoSpins--;
-                        if (autoSpins == 0){
-                            remainingAutoSpins.innerHTML = ``;
-                        }else{
-                            remainingAutoSpins.innerHTML = `${autoSpins}`
+                        if (autoSpinsStopped){
+                            autoSpins = 0
+                            updateAutoSpinStatus();
+                            remainingAutoSpins.innerHTML = ' ';
                         }
-                        if (autoSpins > 0 && balance >= stake) {
-                            setTimeout(() => spin(), 1000);
+                        else{
+                            autoSpins--;
+                            if (autoSpins == 0){
+                                remainingAutoSpins.innerHTML = ``;
+                            }else{
+                                remainingAutoSpins.innerHTML = `${autoSpins}`
+                            }
+                            if (autoSpins > 0 && balance >= stake) {
+                                setTimeout(() => spin(), 1000);
+                            }
+
                         }
+                        
                     }
                     
                     else{
+                        autoSpinsStopped = true;
+                        updateAutoSpinStatus();
                         remainingAutoSpins.innerHTML = ' ';
                     }
                     
@@ -2869,9 +2927,19 @@
 
         // Auto play button and overlay functionality
         autoPlayButton.addEventListener('click', () => {
-            if (!spinning && !isFreeSpinMode) {
+            if (spinning && !isFreeSpinMode) {
+                if (autoSpins > 0) {
+                    autoSpinsStopped = true;
+                    updateAutoSpinStatus();
+                    remainingAutoSpins.innerHTML = '';
+                    autoSpins = 0;
+                }
+            }
+            else if (!spinning && !isFreeSpinMode) {
                 if (autoSpins > 0) {
                     // Cancel auto spins
+                    autoSpinsStopped = true;
+                    updateAutoSpinStatus();
                     autoSpins = 0;
                 } else {
                     autoSpinOverlay.style.display = 'block';
@@ -2996,7 +3064,13 @@
             if (selectedAutoSpins > 0) {
                 autoSpins = selectedAutoSpins;
                 autoSpinOverlay.style.display = 'none';
+                autoSpinsStopped = false
+                updateAutoSpinStatus()
                 spin();
+            }
+            else{
+                updateAutoSpinStatus();
+                autoSpinOverlay.style.display = 'none';
             }
         });
 
