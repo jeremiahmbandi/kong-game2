@@ -1385,15 +1385,16 @@
                     <button class="option-button" data-value="100">100</button>
                     <button class="option-button" data-value="30">30</button>
                 </div>
+                
                 <div class="mt-4 mb-2 text-white">
                     LOSS LIMIT
                 </div>
-                <div class="options-grid">
-                    <button class="option-button"><i class="fa fa-infinity"></i></button>
-                    <button class="option-button">500<span style="font-size: 0.7rem;">x BET</span></button>
-                    <button class="option-button">100<span style="font-size: 0.7rem;">x BET</span></button>
-                    <button class="option-button">50<span style="font-size: 0.7rem;">x BET</span></button>
-                    <button class="option-button">10<span style="font-size: 0.7rem;">x BET</span></button>
+                <div class="options-grid" id="lossLimitOptions">
+                    <button class="option-button" data-value="Infinity"><i class="fa fa-infinity"></i></button>
+                    <button class="option-button" data-value="500">500<span style="font-size: 0.7rem;">x BET</span></button>
+                    <button class="option-button" data-value="100">100<span style="font-size: 0.7rem;">x BET</span></button>
+                    <button class="option-button" data-value="50">50<span style="font-size: 0.7rem;">x BET</span></button>
+                    <button class="option-button" data-value="10">10<span style="font-size: 0.7rem;">x BET</span></button>
                 </div>
                 <div class="divider-container my-3">
                     <div class="divider-wrapper">
@@ -2037,6 +2038,9 @@
         let currentInterval;
         let selectedStake = 0.3; // Default stake value
         let selectedAutoSpins = 0; // Default auto spins value
+        let initialBalance = 0;
+        let lossLimit = Infinity; // Default to no limit
+        let selectedLossLimit = Infinity; // Default selected loss limit
 
         // Free spins state
         let isQuickSpinMode = false
@@ -2777,6 +2781,21 @@ function checkPotentialBigWin(apiResult) {
         // Update the spin function to include rotation handling
         async function spin() {
             if (spinning || (balance < stake && !isFreeSpinMode)) return;
+            
+            // Check if loss limit has been reached
+            if (autoSpins > 0 && !isFreeSpinMode) {
+                const currentLoss = initialBalance - balance;
+                const maxAllowedLoss = lossLimit === Infinity ? Infinity : stake * lossLimit;
+                
+                if (currentLoss >= maxAllowedLoss && maxAllowedLoss !== Infinity) {
+                    autoSpinsStopped = true;
+                    updateAutoSpinStatus();
+                    remainingAutoSpins.innerHTML = '';
+                    autoSpins = 0;
+                    alert(`Auto-spins stopped: Loss limit of ${maxAllowedLoss.toFixed(2)} reached.`);
+                    return;
+                }
+            }
             if (stake <= 0 || (stake > balance && !isFreeSpinMode)) {
                 alert("Invalid stake amount!");
                 return;
@@ -3311,6 +3330,23 @@ function checkPotentialBigWin(apiResult) {
             }
         });
 
+// Handle loss limit option selection
+const lossLimitOptions = document.getElementById('lossLimitOptions');
+lossLimitOptions.addEventListener('click', (e) => {
+    if (e.target.classList.contains('option-button')) {
+        // Remove selected class from all options
+        const options = lossLimitOptions.querySelectorAll('.option-button');
+        options.forEach(option => option.classList.remove('selected'));
+        
+        // Add selected class to clicked option
+        e.target.classList.add('selected');
+        
+        // Update selected loss limit value
+        const value = e.target.dataset.value;
+        selectedLossLimit = value === "Infinity" ? Infinity : parseInt(value);
+    }
+});
+
         // Cancel stake selection
         cancelStakeButton.addEventListener('click', () => {
             stakeOverlay.style.display = 'none';
@@ -3331,19 +3367,21 @@ function checkPotentialBigWin(apiResult) {
         });
 
         // Confirm auto spin selection and start auto play
-        confirmAutoSpinButton.addEventListener('click', () => {
-            if (selectedAutoSpins > 0) {
-                autoSpins = selectedAutoSpins;
-                autoSpinOverlay.style.display = 'none';
-                autoSpinsStopped = false
-                updateAutoSpinStatus()
-                spin();
-            }
-            else{
-                updateAutoSpinStatus();
-                autoSpinOverlay.style.display = 'none';
-            }
-        });
+confirmAutoSpinButton.addEventListener('click', () => {
+    if (selectedAutoSpins > 0) {
+        autoSpins = selectedAutoSpins;
+        lossLimit = selectedLossLimit;
+        initialBalance = balance; // Store initial balance to track losses
+        autoSpinOverlay.style.display = 'none';
+        autoSpinsStopped = false;
+        updateAutoSpinStatus();
+        spin();
+    }
+    else {
+        updateAutoSpinStatus();
+        autoSpinOverlay.style.display = 'none';
+    }
+});
 
         // Initialize
         createReels();
