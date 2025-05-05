@@ -2332,8 +2332,7 @@ function spinAnimation(callback, apiResult) {
     const isBigWin = apiResult && apiResult.win_amount > 100;
     
     // Normal spin counts for each reel
-    // let spinCounts = [25, 30, 35, 40, 50]; 
-    let spinCounts = [5, 6, 7, 8, 9]; 
+    let spinCounts = [25, 30, 35, 40, 50]; 
     
     // If it's a big win, make the last reel spin longer for dramatic effect
     if (isBigWin) {
@@ -2394,7 +2393,7 @@ function spinAnimation(callback, apiResult) {
                                 featuresButton.disabled = false;
                                 callback();
                             }
-                        }, isQuickSpinMode ? 1 : 2); // Slower interval for dramatic effect
+                        }, isQuickSpinMode ? 100 : 200); // Slower interval for dramatic effect
                         
                         return;
                     }
