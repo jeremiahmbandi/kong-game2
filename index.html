@@ -2514,7 +2514,7 @@ function spinAnimation(callback, apiResult) {
                                 featuresButton.disabled = false;
                                 callback();
                             }
-                        }, isQuickSpinMode ? 35 : 70); // Slower interval for dramatic effect
+                        }, isQuickSpinMode ? 20 : 40); // Slower interval for dramatic effect
                         
                         return;
                     }
@@ -2553,7 +2553,7 @@ function spinAnimation(callback, apiResult) {
             
             callback();
         }
-    }, isQuickSpinMode ? 35 : 70);
+    }, isQuickSpinMode ? 20 : 40);
 }
 
 // Add this new function to check for potential big wins based on the first 4 reels
