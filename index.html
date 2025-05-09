@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=576, user-scalable=no">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
+    <!-- <meta name="viewport" content="width=576, user-scalable=no"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kong (Treasure Hunt) Slot Machine</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1291,7 +1291,7 @@
 
                 <!-- Free Spins Overlay -->
                 <div id="freespinsoverlay" style="display: none; position: absolute; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.8); height: 100%; width: 100%; z-index: 999999;">
-                    <div class="mx-3 my-3 d-flex justify-content-center align-items-center">
+                    <div class="mx-3 my-3 d-flex justify-content-center align-items-center" style="height: 100%;width:100%;">
                         <img class="mx-auto my-auto" id="freespinsoverlayimg" src="freespinsoverlay.png" style="width: 85%; height: auto;" alt="">
                         <img class="mx-auto my-auto" id="freespinsoverlayimg2" src="additionalfreespins.png" style="display: none; width: 85%; height: auto;" alt="">
                     </div>
@@ -2041,17 +2041,28 @@
 
         // Game variables
         const symbols = [
-        { name: 'Treasure Chest', image: 'treasurechest.png', multiplier: 2 },
-        { name: 'Explorer', image: 'explorer.png', multiplier: 5 },
-        { name: 'Compass', image: 'compass.png', multiplier: 5 },
-        { name: 'Binoculars', image: 'binoculars.png', multiplier: 5 },
-        { name: 'A', image: 'a.png', multiplier: 5 },
-        { name: 'K', image: 'k.png', multiplier: 5 },
-        { name: 'Q', image: 'q.png', multiplier: 5 },
-        { name: 'J', image: 'j.png', multiplier: 5 },
-        { name: 'Wild', image: 'wild.png', multiplier: 10 },
-        { name: 'Scatter', image: 'scatter.png', multiplier: 3 }
-    ];
+            { name: 'Treasure Chest', image: 'treasurechest.png', multiplier: 2 },
+            { name: 'Explorer', image: 'explorer.png', multiplier: 5 },
+            { name: 'Compass', image: 'compass.png', multiplier: 5 },
+            { name: 'Binoculars', image: 'binoculars.png', multiplier: 5 },
+            { name: 'A', image: 'a.png', multiplier: 5 },
+            { name: 'K', image: 'k.png', multiplier: 5 },
+            { name: 'Q', image: 'q.png', multiplier: 5 },
+            { name: 'J', image: 'j.png', multiplier: 5 },
+            { name: 'Wild', image: 'wild.png', multiplier: 10 },
+            { name: 'Scatter', image: 'scatter.png', multiplier: 3 }
+        ];
+        const symbols_without_wild = [
+            { name: 'Treasure Chest', image: 'treasurechest.png', multiplier: 2 },
+            { name: 'Explorer', image: 'explorer.png', multiplier: 5 },
+            { name: 'Compass', image: 'compass.png', multiplier: 5 },
+            { name: 'Binoculars', image: 'binoculars.png', multiplier: 5 },
+            { name: 'A', image: 'a.png', multiplier: 5 },
+            { name: 'K', image: 'k.png', multiplier: 5 },
+            { name: 'Q', image: 'q.png', multiplier: 5 },
+            { name: 'J', image: 'j.png', multiplier: 5 },
+            { name: 'Scatter', image: 'scatter.png', multiplier: 3 }
+        ];
         const symbolMultiplierMap = new Map(symbols.map(s => [s.name, s.multiplier]));
 
         // Preload reel background image
@@ -2301,28 +2312,144 @@ quickspinToggleImg.addEventListener("click", function () {
         }
 
         // Populate a single reel with symbols
-        function populateReel(reelIndex) {
-            const symbolContainer = reelSymbols[reelIndex];
-            symbolContainer.removeChildren();
+function populateReel(reelIndex) {
+    const symbolContainer = reelSymbols[reelIndex];
+    symbolContainer.removeChildren();
+    
+    const { reelWidth, reelHeight } = calculateReelDimensions();
+    
+    const rowSymbols = [];
+    for (let j = 0; j < numRows; j++) {
+        // For the first reel, never consider the Wild symbol
+        let availableSymbols;
+        if (reelIndex === 0) {
+            availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
+        } else {
+            availableSymbols = symbols;
+        }
+        
+        const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
+        const texture = PIXI.Texture.from(symbol.image);
+        const sprite = new PIXI.Sprite(texture);
+        sprite.y = j * (reelHeight / numRows);
+        sprite.x = reelWidth * 0.03; // Add a small margin
+        sprite.width = reelWidth * 0.99;
+        sprite.height = (reelHeight / numRows) * 1;
+        sprite.symbolName = symbol.name;
+        symbolContainer.addChild(sprite);
+        rowSymbols.push(sprite);
+    }
+    
+    return rowSymbols;
+}
+
+function prepareReelForScrolling(reelIndex) {
+  const symbolContainer = reelSymbols[reelIndex];
+  const { reelWidth, reelHeight } = calculateReelDimensions();
+  const symbolHeight = reelHeight / numRows;
+
+  // Keep existing symbols
+  const existingSymbols = [];
+  for (let j = 0; j < symbolContainer.children.length; j++) {
+      existingSymbols.push(symbolContainer.children[j]);
+  }
+
+  // Add extra symbols above the visible area
+  const extraSymbolsCount = 5; // Number of extra symbols to add above
+  for (let j = 0; j < extraSymbolsCount; j++) {
+      // For the first reel, never use Wild symbol
+      let availableSymbols;
+      if (reelIndex === 0) {
+          availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
+      } else {
+          availableSymbols = symbols;
+      }
+      
+      const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
+      const texture = PIXI.Texture.from(symbol.image);
+      const sprite = new PIXI.Sprite(texture);
+
+      // Position above the visible area
+      sprite.y = -symbolHeight * (extraSymbolsCount - j); // stack in correct order
+      sprite.x = reelWidth * 0.03;
+      sprite.width = reelWidth * 0.99;
+      sprite.height = symbolHeight;
+      sprite.symbolName = symbol.name;
+
+      symbolContainer.addChild(sprite);
+  }
+}
+
+function scrollReelSymbols(reelIndex, speed) {
+    const symbolContainer = reelSymbols[reelIndex];
+    const { reelWidth, reelHeight } = calculateReelDimensions();
+    const symbolHeight = reelHeight / numRows;
+
+    // Move all symbols downward
+    for (let j = 0; j < symbolContainer.children.length; j++) {
+        const sprite = symbolContainer.children[j];
+        sprite.y += speed;
+    }
+
+    // Sort the symbols by vertical position
+    symbolContainer.children.sort((a, b) => a.y - b.y);
+
+    // Recycle symbols that have gone out of view
+    for (let j = 0; j < symbolContainer.children.length; j++) {
+        const sprite = symbolContainer.children[j];
+        if (sprite.y >= reelHeight) {
+            // Find the highest (topmost) y-position of all symbols
+            const highestY = Math.min(...symbolContainer.children.map(s => s.y));
             
-            const { reelWidth, reelHeight } = calculateReelDimensions();
-            
-            const rowSymbols = [];
-            for (let j = 0; j < numRows; j++) {
-                const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-                const texture = PIXI.Texture.from(symbol.image);
-                const sprite = new PIXI.Sprite(texture);
-                sprite.y = j * (reelHeight / numRows);
-                sprite.x = reelWidth * 0.03; // Add a small margin
-                sprite.width = reelWidth * 0.99;
-                sprite.height = (reelHeight / numRows) * 1;
-                sprite.symbolName = symbol.name;
-                symbolContainer.addChild(sprite);
-                rowSymbols.push(sprite);
+            // Place the recycled symbol above the highest one
+            sprite.y = highestY - symbolHeight;
+
+            // Assign a new random symbol, but never Wild on the first reel
+            let availableSymbols;
+            if (reelIndex === 0) {
+                availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
+            } else {
+                availableSymbols = symbols;
             }
             
-            return rowSymbols;
+            const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
+            sprite.texture = PIXI.Texture.from(symbol.image);
+            sprite.symbolName = symbol.name;
         }
+    }
+}
+
+function populateReel(reelIndex) {
+    const symbolContainer = reelSymbols[reelIndex];
+    symbolContainer.removeChildren();
+    
+    const { reelWidth, reelHeight } = calculateReelDimensions();
+    
+    const rowSymbols = [];
+    for (let j = 0; j < numRows; j++) {
+        // For the first reel, never consider the Wild symbol
+        let availableSymbols;
+        if (reelIndex === 0) {
+            availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
+        } else {
+            availableSymbols = symbols;
+        }
+        
+        const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
+        const texture = PIXI.Texture.from(symbol.image);
+        const sprite = new PIXI.Sprite(texture);
+        sprite.y = j * (reelHeight / numRows);
+        sprite.x = reelWidth * 0.03; // Add a small margin
+        sprite.width = reelWidth * 0.99;
+        sprite.height = (reelHeight / numRows) * 1;
+        sprite.symbolName = symbol.name;
+        symbolContainer.addChild(sprite);
+        rowSymbols.push(sprite);
+    }
+    
+    return rowSymbols;
+}
+
 
         // Function to display final symbols for a specific reel
         function displayFinalSymbolsForReel(reelIndex, reelSymbolNames) {
@@ -2358,6 +2485,7 @@ quickspinToggleImg.addEventListener("click", function () {
             }
         }
 
+
         function prepareReelForScrolling(reelIndex) {
     const symbolContainer = reelSymbols[reelIndex];
     const { reelWidth, reelHeight } = calculateReelDimensions();
@@ -2372,7 +2500,15 @@ quickspinToggleImg.addEventListener("click", function () {
     // Add extra symbols above the visible area
     const extraSymbolsCount = 5; // Number of extra symbols to add above
     for (let j = 0; j < extraSymbolsCount; j++) {
-        const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+        // For the first reel, never use Wild symbol
+        let availableSymbols;
+        if (reelIndex === 0) {
+            availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
+        } else {
+            availableSymbols = symbols;
+        }
+        
+        const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
         const texture = PIXI.Texture.from(symbol.image);
         const sprite = new PIXI.Sprite(texture);
 
@@ -2411,8 +2547,15 @@ function scrollReelSymbols(reelIndex, speed) {
             // Place the recycled symbol above the highest one
             sprite.y = highestY - symbolHeight;
 
-            // Assign a new random symbol
-            const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            // Assign a new random symbol, but never Wild on the first reel
+            let availableSymbols;
+            if (reelIndex === 0) {
+                availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
+            } else {
+                availableSymbols = symbols;
+            }
+            
+            const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
             sprite.texture = PIXI.Texture.from(symbol.image);
             sprite.symbolName = symbol.name;
         }
@@ -2761,6 +2904,7 @@ function createFrameAnimation(sprite, imageBaseName, frameCount, frameRate = 200
                                     sprite.visible = Math.floor(Date.now() / 100) % 2 === 0;
                                     sprite.scale.set(maxScaleX, maxScaleY);
                                 };
+                                break
 
                             case "Wild":
                                 animationTicker = createFrameAnimation(sprite, "wildframes3/frame_",  33, 100);
@@ -2976,176 +3120,6 @@ function createFrameAnimation(sprite, imageBaseName, frameCount, frameRate = 200
     return animationTicker;
 }
 
-
-        function highlightWinningSymbols(apiReels, winningPositions) {
-            // If no winning positions are passed, initialize it as an empty array
-            winningPositions = winningPositions || [];
-
-            console.log('------------Listing winning positions----------------');
-            console.log(winningPositions);
-
-            // Define a mapping of symbol names to z-index values
-            const symbolZIndexMap = {
-                "Treasure Chest": 80,
-                "Wild": 100,
-                "Scatter": 90,
-                "Explorer": 60,
-                "Compass": 60,
-                "Binoculars": 70,
-                "A": 50,
-                "K": 50,
-                "Q": 50,
-                "J": 50
-                // Add other symbols and their respective z-indexes here
-            };
-
-            // Loop through each reel
-            for (let i = 0; i < numReels; i++) {
-                const symbolContainer = reelSymbols[i]; // Container for current reel symbols
-
-                // Loop through each symbol (child sprite) in this reel
-                for (let j = 0; j < symbolContainer.children.length; j++) {
-                    const sprite = symbolContainer.children[j];             // Visual representation (sprite)
-                    const currentSymbolName = apiReels[i][j];               // Symbol name from API
-
-                    // Check if this symbol is in the list of winning positions
-                    const isWinning = winningPositions.some(pos =>
-                        pos.symbol === currentSymbolName && pos.reel === i && pos.row === j
-                    );
-
-                    if (isWinning) {
-                        // Reset visual styles
-                        sprite.filters = [];
-                        sprite.visible = true;
-                        sprite.alpha = 1;
-                        sprite.tint = 0xFFFFFF;
-                        sprite.rotation = 0;
-
-                        // Assign zIndex based on the symbol name from the mapping
-                        sprite.zIndex = symbolZIndexMap[currentSymbolName] || 0;  // Default to 0 if not found in map
-
-                        // Store original values for later reset
-                        const originalX = sprite.x;
-                        const originalY = sprite.y;
-                        const originalScale = { x: sprite.scale.x, y: sprite.scale.y };
-                        const originalTexture = sprite.texture;
-
-                        // Define the maximum scale increase (20%)
-                        const maxScaleX = originalScale.x * 1.0;
-                        const maxScaleY = originalScale.y * 1.0;
-
-                        let animationTicker;
-
-                        switch (currentSymbolName) {
-                            case "Explorer":
-                                // Create an array of textures for animation frames
-                                const animationFrames = [
-                                    PIXI.Texture.from("explorer.png"),
-                                    PIXI.Texture.from("explorer_frame1.png"),
-                                    PIXI.Texture.from("explorer_frame2.png"),
-                                    PIXI.Texture.from("explorer_frame3.png")
-                                ];
-                                let frameIndex = 0;
-                                
-                                animationTicker = () => {
-                                    // Change texture every 200ms (5 frames per second)
-                                    if (Date.now() % 200 < 20) {
-                                        frameIndex = (frameIndex + 1) % animationFrames.length;
-                                        sprite.texture = animationFrames[frameIndex];
-                                    }
-                                    sprite.scale.set(maxScaleX, maxScaleY);
-                                };
-                                break;
-                            case "Treasure Chest":
-                                animationTicker = () => {
-                                    sprite.visible = Math.floor(Date.now() / 100) % 2 === 0;
-                                    sprite.scale.set(maxScaleX, maxScaleY);
-                                };
-
-                            case "Wild":
-                                animationTicker = createFrameAnimation(sprite, "wildframes3/frame_",  33, 100);
-                                // const blinkTexture = PIXI.Texture.from("wild3.gif");
-                                // animationTicker = () => {
-                                //     sprite.texture = Math.floor(Date.now() / 850) % 2 === 0
-                                //         ? blinkTexture
-                                //         : originalTexture;
-                                //     sprite.scale.set(originalScale.x, originalScale.y);
-                                // };
-                                break;
-
-                            case "Scatter":
-                                animationTicker = createFrameAnimation(sprite, "freebonusitems/free_item_",  15, 200);
-                                // if (isFreeSpinMode){
-                                //     animationTicker = createFrameAnimation(sprite, "freebonusitems/free_item_",  15, 200);
-                                // }
-                                // else{
-                                //     animationTicker = () => {
-                                //         sprite.alpha = 0.5 
-                                //         + 0.5 * Math.sin(Date.now() / 200);
-                                //         sprite.scale.set(maxScaleX, maxScaleY);
-                                //     };
-                                    
-                                // } 
-                                break;
-
-                            case "Compass":
-                            case "Binoculars":
-                                animationTicker = () => {
-                                    sprite.x = originalX + Math.sin(Date.now() / 80) * 4;
-                                    sprite.scale.set(maxScaleX, maxScaleY);
-                                };
-                                break;
-
-                            case "A":
-                            case "K":
-                            case "Q":
-                            case "J":
-                                animationTicker = () => {
-                                    sprite.visible = Math.floor(Date.now() / 450) % 2 === 0;
-                                    sprite.scale.set(maxScaleX, maxScaleY);
-                                };
-                                break;
-
-                            default:
-                                const blinkTexture2 = PIXI.Texture.from("explorer_blink.gif");
-                                animationTicker = () => {
-                                    sprite.texture = Math.floor(Date.now() / 300) % 2 === 0
-                                        ? blinkTexture2
-                                        : originalTexture;
-                                    sprite.scale.set(originalScale.x, originalScale.y);
-                                };
-                                
-                                
-                        }
-
-                        // Start the animation
-                        const tickerRef = app.ticker.add(animationTicker);
-                        sprite._tickerRef = tickerRef;
-
-                        // Stop animation after 3 seconds and reset everything
-                        setTimeout(() => {
-                            if (app.ticker && sprite._tickerRef) {
-                                app.ticker.remove(sprite._tickerRef);
-                            }
-
-                            sprite.visible = true;
-                            sprite.alpha = 1;
-                            sprite.tint = 0xFFFFFF;
-                            sprite.scale.set(originalScale.x, originalScale.y);
-                            sprite.rotation = 0;
-                            sprite.texture = originalTexture;
-                            sprite.x = originalX;
-                            sprite.y = originalY;
-
-                            // Reset zIndex to ensure it doesn't affect other symbols
-                            sprite.zIndex = 0;
-
-                            delete sprite._tickerRef;
-                        }, 3000);
-                    }
-                }
-            }
-        }
 
         function createFrameAnimationWild(sprite, imageBaseName, frameCount, frameRate = 200) {
     const frames = [];
@@ -3412,6 +3386,29 @@ function rotateSpinButtonImage() {
             spinButtonInnerImage.style.transform = 'rotate(360deg)';
         }
 
+        
+        function extractScatterPositions(reels) {
+            const results = [];
+
+            for (let reel = 0; reel < reels.length; reel++) {
+                for (let row = 0; row < reels[reel].length; row++) {
+                    const symbol = reels[reel][row];
+                    if (symbol === "Scatter") {
+                        results.push({
+                            symbol: "Scatter",
+                            reel: reel,
+                            row: row,
+                            count: 0,       // placeholder
+                            ways: 0,        // placeholder
+                            win_value: 0.0  // placeholder
+                        });
+                    }
+                }
+            }
+
+            return results;
+        }
+        
         // Update the spin function to include rotation handling
         async function spin() {
             if (spinning || (balance < stake && !isFreeSpinMode)) return;
@@ -3496,6 +3493,10 @@ function rotateSpinButtonImage() {
                         freeSpinTriggeredRecently = true
 
                         document.getElementById('img_top').src = 'volcano.gif'
+                        
+                        console.log(result.reels)
+                        console.log('hiiiiiiiiiiiiiiiiiiiiiii')
+                        highlightWinningSymbols(result.reels, extractScatterPositions(result.reels))
 
                         function delayMs(milliseconds) {
                             return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -3563,7 +3564,7 @@ function rotateSpinButtonImage() {
                         
                         // Free spins were just triggered
                         isFreeSpinMode = true;
-                        freeSpinCount = result.free_spin_count;
+                        freeSpinCount = freeSpinCount + 13;
                         bonusMultiplier = result.bonus_multiplier;
                         originalBetAmount = stake;
 
@@ -3571,7 +3572,7 @@ function rotateSpinButtonImage() {
                         document.getElementById('freespins_display').style.display = "flex";
                         document.getElementById('normalspins_display').style.display = "none";
 
-                        remainingFreeSpinCount += 1
+                        // remainingFreeSpinCount += 1
                         document.getElementById('remaining_fs_holder').innerHTML = remainingFreeSpinCount;
                         document.getElementById('total_fs_holder').innerHTML = freeSpinCount;
 
@@ -3581,6 +3582,10 @@ function rotateSpinButtonImage() {
                         freeSpinsCountElement.textContent = freeSpinCount;
                         bonusMultiplierElement.textContent = bonusMultiplier;
                     } else if (result.free_spin_triggered && isFreeSpinMode) {
+
+                        highlightWinningSymbols(result.reels, extractScatterPositions(result.reels))
+
+
                         function delayMs(milliseconds) {
                             return new Promise(resolve => setTimeout(resolve, milliseconds));
                         }
@@ -3589,7 +3594,7 @@ function rotateSpinButtonImage() {
                             freespinsoverlayimg.style.display = "none";
                             freespinsoverlayimg2.style.display = "block";
                             freeSpinsOverlay.style.display = 'block';     // Show image
-                            await delayMs(4000);               // Wait 4 seconds
+                            await delayMs(3000);               // Wait 4 seconds
                             freeSpinsOverlay.style.display = 'none';      // Hide image
                         }
 
@@ -3597,7 +3602,7 @@ function rotateSpinButtonImage() {
                         showImageTemporarily();
                         resizeBackground();
 
-                        freeSpinCount = result.free_spin_count;
+                        freeSpinCount = freeSpinCount + 13;
                         originalBetAmount = stake;
 
                         document.getElementById('remaining_fs_holder').innerHTML = remainingFreeSpinCount;
@@ -3612,13 +3617,13 @@ function rotateSpinButtonImage() {
                     
                     else if (isFreeSpinMode) {
                         // Already in free spin mode
-                        freeSpinCount = result.free_spin_count;
+                        // freeSpinCount = result.free_spin_count;
                         freeSpinsCountElement.textContent = freeSpinCount;
 
                         document.getElementById('remaining_fs_holder').innerHTML = remainingFreeSpinCount;
 
                         // Check if free spins are over
-                        if (result.free_spin_count === 0) {
+                        if (remainingFreeSpinCount >= freeSpinCount) {
                             freeSpinSound.pause()
                             backgroundMusic.play()
                             remainingFreeSpinCount = 0;
@@ -3683,7 +3688,7 @@ function rotateSpinButtonImage() {
                     // Continue free spins automatically
                     if (isFreeSpinMode && freeSpinCount > 0 && !spinning) {
                         remainingFreeSpinCount += 1
-                        freeSpinCount -= 1
+                        // freeSpinCount -= 1
                         if (freeSpinTriggeredRecently){
                             startFreeSpinsOverlay.style.display = "block";
                             freeSpinTriggeredRecently = false
