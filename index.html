@@ -1279,27 +1279,31 @@
                 <img id="img_top_volcano_part_1" src="volcano.gif" style="width: 100%;height: auto;display: none;" alt="">
                 <img id="img_top_volcano_part_2" src="volcano-part-2-complete.gif" style="width: 100%;height: auto;display: none;" alt="">
             </div>
-            <div id="playground" style="background: url('nbcg1.png');min-height: 35vh;width: 100%;background-size: cover;">
-                <div id="startfreespinsoverlay" style="display: none;position: absolute;height: inherit;width: inherit;z-index: 999999;">
-                    <div class="d-flex justify-content-center align-items-center" style="height: 100%;width: 100%;">
-                        <div id="startfreespinsbutton" class="py-1 px-3 text-white" style="border-radius: 6px;border: 2px white solid;font-size: 0.75rem;background-color: rgba(0, 0, 0, 0.8);">
+            <div id="playground" style="position: relative; overflow: hidden; background: url('nbcg1.png'); min-height: 35vh; width: 100%; background-size: cover;">
+                <!-- Start Free Spins Overlay -->
+                <div id="startfreespinsoverlay" style="display: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%; z-index: 999999;">
+                    <div class="d-flex justify-content-center align-items-center" style="height: 100%; width: 100%;">
+                        <div id="startfreespinsbutton" class="py-1 px-3 text-white" style="border-radius: 6px; border: 2px white solid; font-size: 0.75rem; background-color: rgba(0, 0, 0, 0.8);">
                             PRESS REEL TO START THE BONUS
                         </div>
                     </div>
                 </div>
-                <div id="freespinsoverlay" style="display: none;position: absolute;background-color: rgba(0, 0, 0, 0.8);height: inherit;width: inherit;z-index: 999999;">
-                    
-                    <div class="mx-3 my-3">
-                        <img  id="freespinsoverlayimg" class="" src="freespinsoverlay.png" style="width: 100%;height: auto;" alt="">
-                        <img  id="freespinsoverlayimg2" class="" src="additionalfreespins.png" style="display: none;width: 100%;height: auto;" alt="">
+
+                <!-- Free Spins Overlay -->
+                <div id="freespinsoverlay" style="display: none; position: absolute; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.8); height: 100%; width: 100%; z-index: 999999;">
+                    <div class="mx-3 my-3 d-flex justify-content-center align-items-center">
+                        <img class="mx-auto my-auto" id="freespinsoverlayimg" src="freespinsoverlay.png" style="width: 85%; height: auto;" alt="">
+                        <img class="mx-auto my-auto" id="freespinsoverlayimg2" src="additionalfreespins.png" style="display: none; width: 85%; height: auto;" alt="">
                     </div>
                 </div>
+
+                <!-- Game Canvas Content -->
                 <div class="game-canvas-container">
                     <!-- Free Spins Indicator -->
                     <div id="free-spins-indicator" class="free-spins-indicator">
                         FREE SPINS: <span id="free-spins-count">0</span> | MULTIPLIER: <span id="bonus-multiplier">0</span>x
                     </div>
-                    
+
                     <!-- Win Message -->
                     <div id="win-message" class="win-message">
                         <div>BIG WIN!</div>
@@ -1307,6 +1311,7 @@
                     </div>
                 </div>
             </div>
+
     
             <!-- Controls -->
             <div class="game-controls p-2">
