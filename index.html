@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=576, user-scalable=no">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
     <title>Kong (Treasure Hunt) Slot Machine</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -745,7 +746,7 @@
   </style>
 
 </head>
-<body class=" w-100">
+<body class="w-100">
 <div style="background-image: url('page_bcg.png');background-size: cover;height: 100vh;padding: 0 !important;">
     <div style="z-index: 3;position: absolute;">
         <button id="featuresButton" class="btn btn-warning mt-5 mb-2 mx-3">
@@ -1234,10 +1235,6 @@
                 </div>
             </div>
         </div>
-
-
-        
-
 
         <div id="winOverlay" class="mobile-wrapper" >
             <button id="closeBtn" class="btn-close btn-close-white" aria-label="Close"></button>
@@ -3412,14 +3409,8 @@ function rotateSpinButtonImage() {
 
         // Update the spin function to include rotation handling
         async function spin() {
-
-            console.log('aaaaaaaaaaaaaaaaaaaaaaaa')
-
             if (spinning || (balance < stake && !isFreeSpinMode)) return;
 
-            console.log('aaaaaaaaaaaaaabbbbbbbbbbbbbbbaaaaaaaaaa')
-
-            
             // Check if loss limit has been reached
             if (autoSpins > 0 && !isFreeSpinMode) {
                 const currentLoss = initialBalance - balance;
@@ -3470,11 +3461,7 @@ function rotateSpinButtonImage() {
             };
 
             try {
-
                 const result = await spinKongGame(spinRequest);
-
-                
-
                 // Update the reels with the result
                 spinAnimation(() => {
                     // Reset the spin button image after animation completes
