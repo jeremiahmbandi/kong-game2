@@ -1722,7 +1722,7 @@
                 <img id="img_top_volcano_part_1" src="volcano.gif" style="width: 100%;height: auto;display: none;" alt="">
                 <img id="img_top_volcano_part_2" src="volcano-part-2-complete.gif" style="width: 100%;height: auto;display: none;" alt="">
             </div>
-            <div id="playground" style="position: relative; overflow: hidden; background: url('nbcg1.png'); min-height: 35vh; width: 100%; background-size: cover;padding-top: 20px;">
+            <div id="playground" style="position: relative; overflow: hidden; background: url('nbcg1.png'); min-height: 35vh; width: 100%; background-size: cover;z-index: 99;padding-top: 10px;">
                 <!-- Start Free Spins Overlay -->
                 <div id="startfreespinsoverlay" style="display: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%; z-index: 999999;">
                     <div class="d-flex justify-content-center align-items-center" style="height: 100%; width: 100%;">
@@ -2400,7 +2400,7 @@
         gameContainer.appendChild(app.view);
 
         // Load the background image
-        const backgroundTexture = PIXI.Texture.from('nbcg2b.png');
+        const backgroundTexture = PIXI.Texture.from('nbcg2c.png');
         const backgroundSprite = new PIXI.Sprite(backgroundTexture);
 
 
@@ -2765,10 +2765,13 @@ quickspinToggleImg.addEventListener("click", function () {
             }
         }
 
-        // Populate a single reel with symbols
+// For populateReel function
 function populateReel(reelIndex) {
     const symbolContainer = reelSymbols[reelIndex];
     symbolContainer.removeChildren();
+    
+    // Make sure the container supports z-index sorting
+    symbolContainer.sortableChildren = true;
     
     const { reelWidth, reelHeight } = calculateReelDimensions();
     
@@ -2785,10 +2788,28 @@ function populateReel(reelIndex) {
         const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
         const texture = PIXI.Texture.from(symbol.image);
         const sprite = new PIXI.Sprite(texture);
-        sprite.y = j * (reelHeight / numRows);
-        sprite.x = reelWidth * 0.03; // Add a small margin
-        sprite.width = reelWidth * 0.99;
-        sprite.height = (reelHeight / numRows) * 1;
+        
+        // Standard dimensions for regular symbols
+        let symbolWidth = reelWidth * 0.99;
+        let symbolHeight = (reelHeight / numRows) * 1;
+        let symbolX = reelWidth * 0.03;
+        let symbolY = j * (reelHeight / numRows);
+        
+        // Make scatter symbol 1.2 times larger and set higher z-index
+        if (symbol.name === "Scatter") {
+            symbolWidth *= 1.2;
+            symbolHeight *= 1.2;
+            // Adjust position to keep it centered
+            symbolX -= symbolWidth * 0.1;
+            symbolY -= symbolHeight * 0.1;
+            // Set higher z-index to ensure it appears on top
+            sprite.zIndex = 10;
+        }
+        
+        sprite.x = symbolX;
+        sprite.y = symbolY;
+        sprite.width = symbolWidth;
+        sprite.height = symbolHeight;
         sprite.symbolName = symbol.name;
         symbolContainer.addChild(sprite);
         rowSymbols.push(sprite);
@@ -2797,45 +2818,69 @@ function populateReel(reelIndex) {
     return rowSymbols;
 }
 
+// For prepareReelForScrolling function
 function prepareReelForScrolling(reelIndex) {
-  const symbolContainer = reelSymbols[reelIndex];
-  const { reelWidth, reelHeight } = calculateReelDimensions();
-  const symbolHeight = reelHeight / numRows;
+    const symbolContainer = reelSymbols[reelIndex];
+    // Make sure the container supports z-index sorting
+    symbolContainer.sortableChildren = true;
+    
+    const { reelWidth, reelHeight } = calculateReelDimensions();
+    const symbolHeight = reelHeight / numRows;
 
-  // Keep existing symbols
-  const existingSymbols = [];
-  for (let j = 0; j < symbolContainer.children.length; j++) {
-      existingSymbols.push(symbolContainer.children[j]);
-  }
+    // Keep existing symbols
+    const existingSymbols = [];
+    for (let j = 0; j < symbolContainer.children.length; j++) {
+        existingSymbols.push(symbolContainer.children[j]);
+    }
 
-  // Add extra symbols above the visible area
-  const extraSymbolsCount = 5; // Number of extra symbols to add above
-  for (let j = 0; j < extraSymbolsCount; j++) {
-      // For the first reel, never use Wild symbol
-      let availableSymbols;
-      if (reelIndex === 0) {
-          availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
-      } else {
-          availableSymbols = symbols;
-      }
-      
-      const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
-      const texture = PIXI.Texture.from(symbol.image);
-      const sprite = new PIXI.Sprite(texture);
+    // Add extra symbols above the visible area
+    const extraSymbolsCount = 5; // Number of extra symbols to add above
+    for (let j = 0; j < extraSymbolsCount; j++) {
+        // For the first reel, never use Wild symbol
+        let availableSymbols;
+        if (reelIndex === 0) {
+            availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
+        } else {
+            availableSymbols = symbols;
+        }
+        
+        const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
+        const texture = PIXI.Texture.from(symbol.image);
+        const sprite = new PIXI.Sprite(texture);
 
-      // Position above the visible area
-      sprite.y = -symbolHeight * (extraSymbolsCount - j); // stack in correct order
-      sprite.x = reelWidth * 0.03;
-      sprite.width = reelWidth * 0.99;
-      sprite.height = symbolHeight;
-      sprite.symbolName = symbol.name;
+        // Standard dimensions for regular symbols
+        let symbolWidth = reelWidth * 0.99;
+        let symbolHeight = reelHeight / numRows;
+        let symbolX = reelWidth * 0.03;
+        let symbolY = -symbolHeight * (extraSymbolsCount - j); // stack in correct order
+        
+        // Make scatter symbol 1.2 times larger and set higher z-index
+        if (symbol.name === "Scatter") {
+            symbolWidth *= 1.2;
+            symbolHeight *= 1.2;
+            // Adjust position to keep it centered
+            symbolX -= symbolWidth * 0.1;
+            symbolY -= symbolHeight * 0.1;
+            // Set higher z-index to ensure it appears on top
+            sprite.zIndex = 10;
+        }
+        
+        sprite.x = symbolX;
+        sprite.y = symbolY;
+        sprite.width = symbolWidth;
+        sprite.height = symbolHeight;
+        sprite.symbolName = symbol.name;
 
-      symbolContainer.addChild(sprite);
-  }
+        symbolContainer.addChild(sprite);
+    }
 }
 
+// For scrollReelSymbols function - add z-index when recycling symbols
 function scrollReelSymbols(reelIndex, speed) {
     const symbolContainer = reelSymbols[reelIndex];
+    // Make sure the container supports z-index sorting
+    symbolContainer.sortableChildren = true;
+    
     const { reelWidth, reelHeight } = calculateReelDimensions();
     const symbolHeight = reelHeight / numRows;
 
@@ -2869,67 +2914,79 @@ function scrollReelSymbols(reelIndex, speed) {
             const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
             sprite.texture = PIXI.Texture.from(symbol.image);
             sprite.symbolName = symbol.name;
+            
+            // Reset dimensions for regular symbols
+            let symbolWidth = reelWidth * 0.99;
+            let symbolHeight = reelHeight / numRows;
+            let symbolX = reelWidth * 0.03;
+            
+            // Make scatter symbol 1.2 times larger and set higher z-index
+            if (symbol.name === "Scatter") {
+                symbolWidth *= 1.2;
+                symbolHeight *= 1.2;
+                // Adjust position to keep it centered
+                symbolX -= symbolWidth * 0.1;
+                // Set higher z-index to ensure it appears on top
+                sprite.zIndex = 10;
+            } else {
+                // Reset z-index for non-scatter symbols
+                sprite.zIndex = 0;
+            }
+            
+            sprite.x = symbolX;
+            sprite.width = symbolWidth;
+            sprite.height = symbolHeight;
         }
     }
 }
 
-function populateReel(reelIndex) {
+// Also update displayFinalSymbolsForReel to ensure z-index is set
+function displayFinalSymbolsForReel(reelIndex, reelSymbolNames) {
+    const { reelWidth, reelHeight } = calculateReelDimensions();
     const symbolContainer = reelSymbols[reelIndex];
+    // Make sure the container supports z-index sorting
+    symbolContainer.sortableChildren = true;
+    
     symbolContainer.removeChildren();
     
-    const { reelWidth, reelHeight } = calculateReelDimensions();
-    
-    const rowSymbols = [];
+    // Loop through each row in the reel
     for (let j = 0; j < numRows; j++) {
-        // For the first reel, never consider the Wild symbol
-        let availableSymbols;
-        if (reelIndex === 0) {
-            availableSymbols = symbols.filter(symbol => symbol.name !== "Wild");
-        } else {
-            availableSymbols = symbols;
-        }
+        const symbolName = reelSymbolNames[j];
+        const symbolData = KONG_SYMBOLS[symbolName];
         
-        const symbol = availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
-        const texture = PIXI.Texture.from(symbol.image);
-        const sprite = new PIXI.Sprite(texture);
-        sprite.y = j * (reelHeight / numRows);
-        sprite.x = reelWidth * 0.03; // Add a small margin
-        sprite.width = reelWidth * 0.99;
-        sprite.height = (reelHeight / numRows) * 1;
-        sprite.symbolName = symbol.name;
-        symbolContainer.addChild(sprite);
-        rowSymbols.push(sprite);
+        if (symbolData) {
+            const texture = PIXI.Texture.from(symbolData.image);
+            const sprite = new PIXI.Sprite(texture);
+            
+            // Standard dimensions for regular symbols
+            let symbolWidth = reelWidth * 0.96;
+            let symbolHeight = (reelHeight / numRows) * 1;
+            let symbolX = reelWidth * 0.01;
+            let symbolY = j * (reelHeight / numRows);
+            
+            // Make scatter symbol 1.2 times larger and set higher z-index
+            if (symbolName === "Scatter") {
+                symbolWidth *= 1.2;
+                symbolHeight *= 1.2;
+                // Adjust position to keep it centered
+                symbolX -= symbolWidth * 0.1;
+                symbolY -= symbolHeight * 0.1;
+                // Set higher z-index to ensure it appears on top
+                sprite.zIndex = 10;
+            }
+            
+            sprite.x = symbolX;
+            sprite.y = symbolY;
+            sprite.width = symbolWidth;
+            sprite.height = symbolHeight;
+            sprite.symbolName = symbolName;
+            sprite.reelIndex = reelIndex;
+            sprite.rowIndex = j;
+            symbolContainer.addChild(sprite);
+        }
     }
-    
-    return rowSymbols;
 }
 
-
-        // Function to display final symbols for a specific reel
-        function displayFinalSymbolsForReel(reelIndex, reelSymbolNames) {
-            const { reelWidth, reelHeight } = calculateReelDimensions();
-            const symbolContainer = reelSymbols[reelIndex];
-            symbolContainer.removeChildren();
-            
-            // Loop through each row in the reel
-            for (let j = 0; j < numRows; j++) {
-                const symbolName = reelSymbolNames[j];
-                const symbolData = KONG_SYMBOLS[symbolName];
-                
-                if (symbolData) {
-                    const texture = PIXI.Texture.from(symbolData.image);
-                    const sprite = new PIXI.Sprite(texture);
-                    sprite.y = j * (reelHeight / numRows);
-                    sprite.x = reelWidth * 0.01; // Add a small margin
-                    sprite.width = reelWidth * 0.96;
-                    sprite.height = (reelHeight / numRows) * 1;
-                    sprite.symbolName = symbolName;
-                    sprite.reelIndex = reelIndex;
-                    sprite.rowIndex = j;
-                    symbolContainer.addChild(sprite);
-                }
-            }
-        }
 
         // Add this new function to display the API symbols
         function displayAPISymbols(apiReels) {
@@ -4016,7 +4073,7 @@ function rotateSpinButtonImage() {
                         // Run the async function
                         showImageTemporarily();
 
-                        document.getElementById("playground").style.backgroundImage = "url('nbcg3.png')";
+                        document.getElementById("playground").style.backgroundImage = "url('nbcg3b.png')";
 
                         changeBackground('nbcg4.png');
                         resizeBackground();
