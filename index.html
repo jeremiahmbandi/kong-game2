@@ -1693,7 +1693,7 @@
             </div>
         </div>
         
-        <div id="jdb_overlay" >
+        <div id="jdb_overlay" style="display: none;">
             <div style="height: 100%;width: 100%;" class="d-flex justify-content-center align-items-center">
                 <div class="row">
                     <div class="d-flex justify-content-center align-items-center mx-auto">
@@ -1710,7 +1710,7 @@
             </div>
         </div>
     
-        <div id="kong_overlay">
+        <div id="kong_overlay" style="display: none;">
             <div class="d-flex justify-content-center">
                 <button class="glowing-button text-white" onclick="hideKongOverlay()">START</button>
             </div>
@@ -1722,7 +1722,7 @@
                 <img id="img_top_volcano_part_1" src="volcano.gif" style="width: 100%;height: auto;display: none;" alt="">
                 <img id="img_top_volcano_part_2" src="volcano-part-2-complete.gif" style="width: 100%;height: auto;display: none;" alt="">
             </div>
-            <div id="playground" style="position: relative; overflow: hidden; background: url('nbcg1.png'); min-height: 35vh; width: 100%; background-size: cover;">
+            <div id="playground" style="position: relative; overflow: hidden; background: url('nbcg1.png'); min-height: 35vh; width: 100%; background-size: cover;padding-top: 20px;">
                 <!-- Start Free Spins Overlay -->
                 <div id="startfreespinsoverlay" style="display: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%; z-index: 999999;">
                     <div class="d-flex justify-content-center align-items-center" style="height: 100%; width: 100%;">
@@ -2400,7 +2400,7 @@
         gameContainer.appendChild(app.view);
 
         // Load the background image
-        const backgroundTexture = PIXI.Texture.from('nbcg2.png');
+        const backgroundTexture = PIXI.Texture.from('nbcg2b.png');
         const backgroundSprite = new PIXI.Sprite(backgroundTexture);
 
 
@@ -3044,7 +3044,7 @@ function spinAnimation(callback, apiResult) {
     }
     
     // Speed of symbol movement (pixels per frame)
-    const scrollSpeed = isQuickSpinMode ? 30 : 20;
+    const scrollSpeed = isQuickSpinMode ? 40 : 30;
     
     currentInterval = setInterval(() => {
         let allStopped = true;
