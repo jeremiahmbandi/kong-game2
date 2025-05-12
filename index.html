@@ -281,7 +281,6 @@
         .loader-bar {
             height: 100%;
             width: 0;
-            background: orange;
             transition: width 0.3s ease;
         }
         .glowing-button {
@@ -1701,8 +1700,8 @@
                         <div>
                             <img src="jdb_logo.png" style="max-width: 100%;" alt="mx-auto">
                             <div class="d-flex justify-content-center mx-auto">
-                                <div class="loader-container" style="width: 50%;border-style: solid;border-width: 1px;">
-                                    <div class="loader-bar" id="loader-bar"></div>
+                                <div class="loader-container" style="width: 50%;border-style: solid;border-width: 1px;border-radius: 12px;">
+                                    <div class="loader-bar" style="border-radius: 12px;" id="loader-bar"></div>
                                 </div>
                             </div>
                         </div>
@@ -2334,18 +2333,29 @@
         document.addEventListener("DOMContentLoaded", function () {
             let loaderBar = document.getElementById("loader-bar");
             let progress = 0;
-            
+
             function updateProgress() {
                 progress += Math.random() * 10;
+
+                if (progress > 100) progress = 100;
+
+                loaderBar.style.width = progress + "%";
+
+                // Interpolate green from 165 (orange) to 140 (darkorange)
+                let green = 165 - (progress / 100) * (165 - 140);
+                loaderBar.style.backgroundColor = `rgb(255, ${green}, 0)`;
+
                 if (progress < 100) {
-                    loaderBar.style.width = progress + "%";
                     setTimeout(updateProgress, 500);
                 } else {
-                    loaderBar.style.width = "100%";
-                    setTimeout(() => document.querySelector(".loader-container").style.display = "none", 500);
-                    document.getElementById('jdb_overlay').style.display = "none";
+                    setTimeout(() => {
+                        document.querySelector(".loader-container").style.display = "none";
+                        document.getElementById('jdb_overlay').style.display = "none";
+                    }, 500);
                 }
             }
+
+
             
             updateProgress();
         });
@@ -3015,7 +3025,8 @@ function spinAnimation(callback, apiResult) {
     const isBigWin = apiResult && apiResult.win_amount > 100;
     
     // Normal spin counts for each reel
-    let spinCounts = [25, 30, 35, 40, 50]; 
+    // let spinCounts = [25, 30, 35, 40, 50]; 
+    let spinCounts = [50, 57, 64, 71, 78]; 
     
     // If it's a big win, make the last reel spin longer for dramatic effect
     if (isBigWin) {
@@ -3101,7 +3112,7 @@ function spinAnimation(callback, apiResult) {
                                 featuresButton.disabled = false;
                                 callback();
                             }
-                        }, isQuickSpinMode ? 20 : 40); // Slower interval for dramatic effect
+                        }, isQuickSpinMode ? 20 : 30); // Slower interval for dramatic effect
                         
                         return;
                     }
@@ -3140,7 +3151,7 @@ function spinAnimation(callback, apiResult) {
             
             callback();
         }
-    }, isQuickSpinMode ? 20 : 40);
+    }, isQuickSpinMode ? 20 : 30);
 }
 
 // Add this new function to check for potential big wins based on the first 4 reels
@@ -3301,6 +3312,93 @@ function createFrameAnimationFreeSpin(sprite, imageBaseName, frameCount, frameRa
 }
 
 
+
+const spriteScalesWild = {};
+
+function createFrameAnimationWild(sprite, imageBaseName, frameCount, frameRate = 50) {
+    const frames = [];
+    for (let i = 0; i <= frameCount; i++) {
+        frames.push(PIXI.Texture.from(`${imageBaseName}${i}.png`));
+    }
+
+    // Create a unique ID for this sprite to track its scale
+    const spriteId = sprite.name || `sprite_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Initialize the scale tracking if it doesn't exist
+    if (!spriteScalesWild[spriteId]) {
+        spriteScalesWild[spriteId] = {
+            originalScale: { x: sprite.scale.x, y: sprite.scale.y },
+            currentScaleFactor: 1.0
+        };
+    }
+    
+    let currentFrame = 0;
+    let direction = 1; // 1 = forward, -1 = backward
+    
+    sprite.anchor.set(0.0, 0.0); // Set anchor to center for better scaling
+    
+    // Ensure sprite appears on top when parent is available
+    const checkParentInterval = setInterval(() => {
+        if (sprite.parent) {
+            sprite.parent.sortableChildren = true;
+            sprite.zIndex = 9999999;
+            clearInterval(checkParentInterval);
+        }
+    }, 10);
+
+    let lastUpdateTime = 0;
+    const maxScaleFactor = 1.3; // Maximum scale to reach at the last frame
+    
+    const animationTicker = (delta) => {
+        const now = Date.now();
+        if (now - lastUpdateTime >= frameRate) {
+            lastUpdateTime = now;
+            
+            // Save previous frame to detect frame changes
+            const prevFrame = currentFrame;
+            
+            currentFrame += direction;
+
+            // Reverse direction at the ends
+            if (currentFrame >= frames.length) {
+                currentFrame = frames.length - 2;
+                direction = -1;
+            } else if (currentFrame < 0) {
+                currentFrame = 1;
+                direction = 1;
+            }
+
+            // Update the texture
+            sprite.texture = frames[currentFrame];
+            
+            // Calculate scale based on current frame position
+            // This creates a smooth scaling effect that increases to the last frame and decreases back to the first
+            const progress = currentFrame / (frames.length - 1); // 0 to 1 representing progress through frames
+            const scaleFactor = 1.0 + (maxScaleFactor - 1.0) * progress;
+            
+            // Apply the new scale based on original scale and current factor
+            const newScaleX = spriteScalesWild[spriteId].originalScale.x * scaleFactor;
+            const newScaleY = spriteScalesWild[spriteId].originalScale.y * scaleFactor;
+            
+            // Set the sprite's scale
+            sprite.scale.set(newScaleX, newScaleY);
+            
+            // Debug log to confirm scaling is happening
+            console.log(`Sprite ${spriteId} - Frame: ${currentFrame}, Progress: ${progress.toFixed(2)}, Scale Factor: ${scaleFactor.toFixed(2)}, Actual Scale: ${newScaleX.toFixed(2)}, ${newScaleY.toFixed(2)}`);
+        }
+    };
+
+    // Add a method to reset the scale if needed
+    animationTicker.resetScale = () => {
+        sprite.scale.set(
+            spriteScalesWild[spriteId].originalScale.x,
+            spriteScalesWild[spriteId].originalScale.y
+        );
+    };
+
+    return animationTicker;
+}
+
         function highlightWinningSymbols(apiReels, winningPositions) {
             // If no winning positions are passed, initialize it as an empty array
             winningPositions = winningPositions || [];
@@ -3388,7 +3486,7 @@ function createFrameAnimationFreeSpin(sprite, imageBaseName, frameCount, frameRa
                                 break
 
                             case "Wild":
-                                animationTicker = createFrameAnimation(sprite, "wildframes3/frame_",  33, 100);
+                                animationTicker = createFrameAnimationWild(sprite, "wildframes3/frame_",  33, 100);
                                 // const blinkTexture = PIXI.Texture.from("wild3.gif");
                                 // animationTicker = () => {
                                 //     sprite.texture = Math.floor(Date.now() / 850) % 2 === 0
