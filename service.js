@@ -74,7 +74,6 @@ async function placeBet(amount) {
         return;
     }
 
-    const betId = Math.floor(Math.random() * 1000000);
     const betData = {
         player_id: playerInfo.id,
         amount: amount,
@@ -92,6 +91,7 @@ async function placeBet(amount) {
         const data = await response.json();
         console.log("Bet placed successfully:", data);
         lastPlacedBetData = betData;
+        lastPlacedBetData.bet_id = data.bet_id;
 
     } catch (error) {
         lastPlacedBetData = {
@@ -103,6 +103,58 @@ async function placeBet(amount) {
         }
         console.error("Error placing bet:", error);
     }
+}
+
+
+// Add this function to transform the server response to match the expected format
+function transformServerResponse(data) {
+  // Check if the response is successful
+  if (data.status !== "success") {
+    console.error("Server returned error:", data.message)
+    return null
+  }
+
+  // Transform the reels data structure
+  // The server returns a 2D array where each inner array represents a column of symbols
+  // We need to convert this to the format expected by our game
+  const transformedReels = []
+
+  // Process each reel (column)
+  for (let i = 0; i < data.reels.length; i++) {
+    const reelSymbols = []
+
+    // Process each symbol in the reel
+    for (let j = 0; j < data.reels[i].length; j++) {
+      const symbolName = data.reels[i][j]
+
+      // Find the symbol in the SYMBOLS array
+      const symbolData = SYMBOLS.find((s) => s.name === symbolName)
+
+      // Create a symbol object with fallback values if the symbol is not found
+      reelSymbols.push({
+        name: symbolName,
+        isSpecial: true,
+        scale: SYMBOL_SCALE_MAP[symbolName] || 1.2,
+        // Add fallback properties from the SYMBOLS array or defaults
+        color: symbolData ? symbolData.color : "#999999",
+        normal_scale: symbolData ? symbolData.normal_scale : 1.2,
+        z_index: symbolData ? symbolData.z_index : 5,
+      })
+    }
+
+    transformedReels.push(reelSymbols)
+  }
+
+  // Return the transformed data in the format expected by our game
+  return {
+    reels: transformedReels,
+    win: data.win_amount,
+    winningPositions: data.winning_positions || [],
+    triggerFreeSpins: data.free_spin_triggered,
+    isFreeSpinMode: data.is_free_spin,
+    freeSpinCount: data.free_spin_count,
+    bonusMultiplier: data.bonus_multiplier,
+  }
 }
 
 
